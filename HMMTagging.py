@@ -117,15 +117,7 @@ for sent in train_sent:
     train_words += train_word
     train_tag = ''
     train_word = ''
-
-rare_word = set()
-word_count = ddict(int)
-for word in train_words.split():
-    word_count[word] += 1
-for word in word_count.keys():
-    if word_count[word] < 5:
-        rare_word.add(word)
-
+    
 num_of_tag = ddict(lambda : 0)
 num_of_word_tag = ddict(lambda : 0)
 
