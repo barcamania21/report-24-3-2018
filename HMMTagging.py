@@ -17,33 +17,33 @@ class HMM(object):
     def add(self, state, transition_dict = {}, emission_dict = {}):
         self._states.append(state)
 
-        for target_state, prob in transition_dict.items():
-            self._transitions[state][target_state] = prob
+        for next_state, prob in transition_dict.items():
+            self._transitions[state][next_state] = prob
         for observation, prob in emission_dict.items():
             self._emissions[state][observation] = prob
 
     def predict(self, observations):
-        probs = ddict(lambda : ddict(lambda : 0.0))
-        probs[-1][self.INITIAL] = 1.0
+        prob = ddict(lambda : ddict(lambda : 0.0))
+        prob[-1][self.INITIAL] = 1.0
         pointers = ddict(lambda : {})
         i = -1
         for i, observations in enumerate(observations):
             for state in self._states:
-                path_probs = {}
+                probs = {}
 
                 for prev_state in self._states:
-                    path_probs[prev_state] = (probs[i-1][prev_state] *
+                    probs[prev_state] = (prob[i-1][prev_state] *
                         (self._transitions[prev_state][state])*(self._emissions[state][observations]))
 
-                best_state = max(path_probs, key = path_probs.get)
-                probs[i][state] = path_probs[best_state]
+                best_state = max(probs, key = probs.get)
+                prob[i][state] = probs[best_state]
                 pointers[i][state] = best_state
 
-        curr_state = max(probs[i], key = probs[i].get)
+        current_state = max(prob[i], key = prob[i].get)
         states = []
         for i in range(i, -1, -1):
-            states.append(curr_state)
-            curr_state = pointers[i][curr_state]
+            states.append(current_state)
+            current_state = pointers[i][current_state]
         states.reverse()
         return states
 
