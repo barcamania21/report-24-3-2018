@@ -47,7 +47,7 @@ class HMM(object):
         states.reverse()
         return states
 
-
+    """ Xác suất chuyển tiếp các tag """
     def transition_probs(self, tag, train_tags):
         transition_prob_dict = ddict(lambda : 0.0)
         tags = re.findall("\w+", train_tags)
@@ -58,7 +58,7 @@ class HMM(object):
             if couple_tag in test_tags and (tag, next_tag) in count_bigram_dict.keys():
                 transition_prob_dict[next_tag] = (count_bigram_dict[(tag, next_tag)]) / (num_of_tag[tag])
         return transition_prob_dict
-
+    """ Xác suất từ "ABC" được gắn thẻ "XYZ" """
     def observation_probs(self, tag):
         observation_prob_dict = ddict(lambda : 0.0)
         for sent in train_sent:
@@ -71,12 +71,7 @@ class HMM(object):
                     observation_prob_dict[word] = (num_of_word_tag[word_tag_couple])  / (num_of_tag[tag])
         return observation_prob_dict
 
-def filter_text(text):
-    list  = []
-    for word in text.split(" "):
-        if ('/' in word ):
-            list.append(word)
-    return " ".join(list)
+""" Tiền xử lý """
 
 train_text = open('/Users/naduong1001/Desktop/data.txt').read()
 
@@ -167,6 +162,8 @@ for sent in train_sent:
 for tag in tag_in_the_first.keys():
     tag_in_the_first[tag] /= (num_of_sentences)
 
+ 
+""" Predict """
 hmm = HMM()
 hmm.add(HMM.INITIAL, tag_in_the_first)
 for tag in num_of_tag.keys():
